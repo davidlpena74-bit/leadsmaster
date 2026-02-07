@@ -1,0 +1,9 @@
+node_modules
+.next
+.git
+.vscode
+tmp-profiles
+*.log
+.gitignore
+Dockerfile
+README.md
