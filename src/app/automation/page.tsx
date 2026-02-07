@@ -203,10 +203,6 @@ export default function AutomationPage() {
                             <Bot size={20} />
                             <span className="font-medium">Robot Settings</span>
                         </button>
-                        <Link href="/servers" className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 hover:bg-muted text-muted-foreground hover:text-foreground">
-                            <Server size={20} />
-                            <span className="font-medium">Server Status</span>
-                        </Link>
                         <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 hover:bg-muted text-muted-foreground hover:text-foreground">
                             <Settings size={20} />
                             <span className="font-medium">Settings</span>

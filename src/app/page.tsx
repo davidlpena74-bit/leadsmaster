@@ -83,7 +83,6 @@ export default function LeadsDashboard() {
               { icon: Users, label: 'Leads', active: false, href: '#' },
               { icon: MessageSquare, label: 'Communications', active: false, href: '#' },
               { icon: Bot, label: 'Robot Automation', active: false, href: '/automation' },
-              { icon: Server, label: 'Server Status', active: false, href: '/servers' },
               { icon: Settings, label: 'Settings', active: false, href: '#' },
             ].map((item, i) => (
               item.href !== '#' ? (

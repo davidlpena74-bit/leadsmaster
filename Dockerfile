@@ -1,30 +1,37 @@
-# --- ESTA ES LA VERSIÓN ULTRA-LIGERA PARA KOYEB FREE ---
-
-# 1. Compilación (Imagen pequeña de 20MB en lugar de 700MB)
+# 1. Etapa de Construcción (Ligera)
 FROM node:20-slim AS builder
 WORKDIR /app
+
+# Instalamos dependencias de sistema mínimas para compilar
+RUN apt-get update && apt-get install -y python3 make g++ && rm -rf /var/lib/apt/lists/*
+
 COPY package*.json ./
+# Instalación normal
 RUN npm install --no-audit --no-fund
 
 COPY . .
-# Forzamos a Next.js a no usar mucha RAM en el build
-ENV NODE_OPTIONS="--max-old-space-size=450"
+# Forzamos ahorro de RAM en el build de Next.js
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_OPTIONS="--max-old-space-size=400"
 RUN npx next build
 
-# 2. Ejecución (Aquí sí necesitamos Playwright)
-FROM mcr.microsoft.com/playwright:v1.49.0-noble AS runner
+# 2. Etapa de Ejecución (Solo instalamos Chromium cuando sea necesario)
+FROM node:20-slim AS runner
 WORKDIR /app
+
+# Instalamos las librerías necesarias para que Chrome funcione en Linux
+RUN apt-get update && apt-get install -y \
+    libgbm1 libnss3 libasound2 libxss1 libatk-bridge2.0-0 libgtk-3-0 \
+    && rm -rf /var/lib/apt/lists/*
 
 ENV NODE_ENV=production
 ENV PORT=8000
 
-# Copiamos solo lo necesario del builder
-COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/scripts ./scripts
+# Copiamos los archivos compilados del builder
+COPY --from=builder /app ./
+
+# Instalamos solo el navegador Chromium de Playwright (ahorra 1GB de espacio frente a la imagen completa)
+RUN npx playwright install chromium
 
 EXPOSE 8000
 
